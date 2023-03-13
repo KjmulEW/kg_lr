@@ -15,6 +15,7 @@ class image_obj:
         self.poly = []
         self.image_matrix_v = np.zeros((1000, 1000, 3), dtype=np.uint8)
         self.image_matrix_f = np.zeros((1000, 1000, 3), dtype=np.uint8)
+        self.image_matrix_t = np.zeros((1000, 1000, 3), dtype=np.uint8)
 
     def read_vert(self, file):
         for x in file:
@@ -61,6 +62,22 @@ class image_obj:
                                self.image_matrix_f)
         image = Image.fromarray(self.image_matrix_f, mode='RGB')
         image.save(filename)
+
+    def draw_triangle(self, x0, y0, x1, y1, x2, y2):
+        xmin = int(min(x0, x1, x2))
+        ymin = int(min(y0, y1, y2))
+        xmax = int(max(x0, x1, x2))
+        ymax = int(max(y0, y1, y2))
+        if (xmin < 0): xmin = 0
+        if (ymin < 0): ymin = 0
+        if (xmax < 0): xmax = 1000
+        if (ymax < 0): xmin = 1000
+        rand_color = np.random.randint(256,size=3)
+        for x in range(xmin,xmax+1):
+            for y in range(ymin,ymax+1):
+                bar_cord = kg_algs.bar_cord(x,y,x0,y0,x1,y1,x2,y2)
+                if bar_cord[0]>0 and bar_cord[1]>0 and bar_cord[2]>0:
+                    self.image_matrix_t[x, y] = rand_color
 
 
 model1 = image_obj()

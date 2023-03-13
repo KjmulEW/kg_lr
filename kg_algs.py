@@ -41,3 +41,4 @@ def bar_cord(x, y, x0, y0, x1, y1, x2, y2):
     lambda2 = ((x0 - x1) * (y - y1) - (y0 - y1) * (x - x1)) / ((x0 - x1) * (y2 - y1) - (y0 - y1) * (x2 - x1))
     if sum(lambda0, lambda1, lambda2) != 1:
         print('Все плохо')
+    return list(lambda0, lambda1, lambda2)
