@@ -64,12 +64,12 @@ class image_obj:
         image.save(filename)
 
     def draw_triangle(self, x0, y0, x1, y1, x2, y2, k):
-        x0 *= k
-        y0 *= k
-        x1 *= k
-        y1 *= k
-        x2 *= k
-        y2 *= k
+        x0 = x0 * k + CENTER_X
+        y0 = y0 * k + CENTER_Y
+        x1 = x1 * k + CENTER_X
+        y1 = y1 * k + CENTER_Y
+        x2 = x2 * k + CENTER_X
+        y2 = y2 * k + CENTER_Y
         xmin = int(min(x0, x1, x2))
         ymin = int(min(y0, y1, y2))
         xmax = int(max(x0, x1, x2))
@@ -78,12 +78,18 @@ class image_obj:
         if (ymin < 0): ymin = 0
         if (xmax < 0): xmax = 1000
         if (ymax < 0): xmin = 1000
-        rand_color = np.random.randint(256,size=3)
-        for x in range(xmin,xmax+1):
-            for y in range(ymin,ymax+1):
-                bar_cord = kg_algs.bar_cord(x,y,x0,y0,x1,y1,x2,y2)
-                if bar_cord[0]>0 and bar_cord[1]>0 and bar_cord[2]>0:
+        rand_color = np.random.randint(256, size=3)
+        for x in range(xmin, xmax + 1):
+            for y in range(ymin, ymax + 1):
+                bar_cord = kg_algs.bar_cord(x, y, x0, y0, x1, y1, x2, y2)
+                if bar_cord[0] > 0 and bar_cord[1] > 0 and bar_cord[2] > 0:
                     self.image_matrix_t[x, y] = rand_color
+
+    def draw_triangles(self, filename, k):
+        for item in self.poly:
+            self.draw_triangle(-self.verts[item[0] - 1][1], -self.verts[item[0] - 1][0], -self.verts[item[1] - 1][1],
+                               -self.verts[item[1] - 1][0], -self.verts[item[2] - 1][1], -self.verts[item[2] - 1][0], k)
+            self.save_triangle(filename)
 
     def save_triangle(self, filename):
         image = Image.fromarray(self.image_matrix_t, mode="RGB")
@@ -92,16 +98,20 @@ class image_obj:
 
 model1 = image_obj()
 model2 = image_obj()
+
 model1.read_vert(open("model_1.obj", "r"))
 model2.read_vert(open("model_2.obj", "r"))
 model1.draw_vert('vert1.png', 5000)
 model2.draw_vert('vert2.png', 1 / 3)
+
 model1.read_poly(open("model_1.obj", "r"))
 model2.read_poly(open("model_2.obj", "r"))
 model1.draw_poly('poly1.png', 5000)
 model2.draw_poly('poly2.png', 1 / 3)
+
 model3 = image_obj()
-model3.read_vert(open("model_3.obj", "r"))
-model3.read_poly(open("model_3.obj", "r"))
-model3.draw_triangle()
-model3.save_triangle()
+model3.draw_triangle(499, 200, -100, -200, 75, 250, 1)
+model3.save_triangle("test_triangle.png")
+
+model1.draw_triangles("triangle2.png", 5000)
+model2.draw_triangles("triangle2.png", 1 / 3)
