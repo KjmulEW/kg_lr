@@ -3,6 +3,7 @@ from PIL import Image
 import numpy as np
 import math
 
+
 def br_alg(x0, y0, x1, y1, image_matrix):
     steep = False
     if abs(x0 - x1) < abs(y0 - y1):
@@ -33,9 +34,10 @@ def br_alg(x0, y0, x1, y1, image_matrix):
             error -= 1
         x += 1
 
-def bar_cord(x,y,x0,y0,x1,y1,x2,y2):
-    lambda0 = ((x1 - x2) * (y - y2) - (y1 - y2)*(x - x2)) / ((x1 - x2) * (y0 - y2) - (y1 - y2)*(x0 - x2))
-    lambda1 = ((x2 - x0) * (y - y0) - (y2 - y0)*(x - x0)) / ((x2 - x0) * (y1 - y0) - (y2 - y0)*(x1 - x0))
-    lambda2 = ((x0 - x1) * (y - y1) - (y0 - y1)*(x - x1)) / ((x0 - x1) * (y2 - y1) - (y0 - y1)*(x2 - x1))
-    if sum(lambda0,lambda1,lambda2)!=1:
+
+def bar_cord(x, y, x0, y0, x1, y1, x2, y2):
+    lambda0 = ((x1 - x2) * (y - y2) - (y1 - y2) * (x - x2)) / ((x1 - x2) * (y0 - y2) - (y1 - y2) * (x0 - x2))
+    lambda1 = ((x2 - x0) * (y - y0) - (y2 - y0) * (x - x0)) / ((x2 - x0) * (y1 - y0) - (y2 - y0) * (x1 - x0))
+    lambda2 = ((x0 - x1) * (y - y1) - (y0 - y1) * (x - x1)) / ((x0 - x1) * (y2 - y1) - (y0 - y1) * (x2 - x1))
+    if sum(lambda0, lambda1, lambda2) != 1:
         print('Все плохо')

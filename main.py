@@ -3,13 +3,12 @@ import numpy as np
 import math
 import kg_algs
 
+CENTER_X = 500
+CENTER_Y = 500
+CENTER_Z = 500
+
+
 class image_obj:
-
-
-    CENTER_X=500
-    CENTER_Y=500
-    CENTER_Z=500
-
 
     def __init__(self):
         self.verts = []
@@ -22,7 +21,7 @@ class image_obj:
             if x.split():
                 flag = False
                 if x.split()[0] == "v":
-                    self.v_arr.append(list(map(float, x.split()[1:])))
+                    self.verts.append(list(map(float, x.split()[1:])))
                     flag = True
                 else:
                     if flag:
@@ -31,7 +30,7 @@ class image_obj:
 
     def draw_vert(self, filename, k):
         global CENTER_X, CENTER_Y
-        for item in self.v_arr:
+        for item in self.verts:
             y = -int(item[0] * k) + CENTER_Y
             x = -int(item[1] * k) + CENTER_X
             self.image_matrix_v[x, y] = [255, 255, 255]
@@ -44,7 +43,7 @@ class image_obj:
             if xsplit:
                 flag = False
                 if xsplit[0] == "f":
-                    self.f_arr.append(
+                    self.poly.append(
                         list(map(int, [xsplit[1].split('/')[0], xsplit[2].split('/')[0], xsplit[3].split('/')[0]])))
                     flag = True
                 else:
@@ -53,11 +52,24 @@ class image_obj:
         return self
 
     def draw_poly(self, filename, k):
-        for item in self.f_arr:
+        for item in self.poly:
             for i in range(3):
-                br_alg(-(self.v_arr[item[i] - 1][1] * k + CENTER_X), -(self.v_arr[item[i] - 1][0] * k + CENTER_Y),
-                       -(self.v_arr[item[(i+1)%3] - 1][1] * k + CENTER_X), -(self.v_arr[item[(i+1)%3] - 1][0] * k + CENTER_Y),
-                       self.image_matrix_f)
+                kg_algs.br_alg(-(self.verts[item[i] - 1][1] * k + CENTER_X),
+                               -(self.verts[item[i] - 1][0] * k + CENTER_Y),
+                               -(self.verts[item[(i + 1) % 3] - 1][1] * k + CENTER_X),
+                               -(self.verts[item[(i + 1) % 3] - 1][0] * k + CENTER_Y),
+                               self.image_matrix_f)
         image = Image.fromarray(self.image_matrix_f, mode='RGB')
         image.save(filename)
 
+
+model1 = image_obj()
+model2 = image_obj()
+model1.read_vert(open("model_1.obj", "r"))
+model2.read_vert(open("model_2.obj", "r"))
+model1.draw_vert('vert1.png', 5000)
+model2.draw_vert('vert2.png', 1 / 3)
+model1.read_poly(open("model_1.obj", "r"))
+model2.read_poly(open("model_2.obj", "r"))
+model1.draw_poly('poly1.png', 5000)
+model2.draw_poly('poly2.png', 1 / 3)
