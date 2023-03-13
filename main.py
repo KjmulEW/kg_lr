@@ -63,7 +63,13 @@ class image_obj:
         image = Image.fromarray(self.image_matrix_f, mode='RGB')
         image.save(filename)
 
-    def draw_triangle(self, x0, y0, x1, y1, x2, y2):
+    def draw_triangle(self, x0, y0, x1, y1, x2, y2, k):
+        x0 *= k
+        y0 *= k
+        x1 *= k
+        y1 *= k
+        x2 *= k
+        y2 *= k
         xmin = int(min(x0, x1, x2))
         ymin = int(min(y0, y1, y2))
         xmax = int(max(x0, x1, x2))
@@ -79,6 +85,10 @@ class image_obj:
                 if bar_cord[0]>0 and bar_cord[1]>0 and bar_cord[2]>0:
                     self.image_matrix_t[x, y] = rand_color
 
+    def save_triangle(self, filename):
+        image = Image.fromarray(self.image_matrix_t, mode="RGB")
+        image.save(filename)
+
 
 model1 = image_obj()
 model2 = image_obj()
@@ -90,3 +100,8 @@ model1.read_poly(open("model_1.obj", "r"))
 model2.read_poly(open("model_2.obj", "r"))
 model1.draw_poly('poly1.png', 5000)
 model2.draw_poly('poly2.png', 1 / 3)
+model3 = image_obj()
+model3.read_vert(open("model_3.obj", "r"))
+model3.read_poly(open("model_3.obj", "r"))
+model3.draw_triangle()
+model3.save_triangle()
