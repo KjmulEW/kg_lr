@@ -40,3 +40,24 @@ def bar_cord(x, y, x0, y0, x1, y1, x2, y2):
     lambda1 = ((x2 - x0) * (y - y0) - (y2 - y0) * (x - x0)) / ((x2 - x0) * (y1 - y0) - (y2 - y0) * (x1 - x0))
     lambda2 = ((x0 - x1) * (y - y1) - (y0 - y1) * (x - x1)) / ((x0 - x1) * (y2 - y1) - (y0 - y1) * (x2 - x1))
     return [lambda0, lambda1, lambda2]
+
+
+def triangle_normal(vert0, vert1, vert2):
+    """
+    Calculate the normal vector to a triangle given by three vertices with coordinates x, y, z.
+    """
+    # Calculate two vectors within the triangle
+    v1 = np.array([vert1[0] - vert0[0], vert1[1] - vert0[1], vert1[2] - vert0[2]])
+    v2 = np.array([vert1[0] - vert2[0], vert1[1] - vert2[1], vert1[2] - vert2[2]])
+
+    # Calculate the cross product of the two vectors to get the normal vector
+    normal = np.cross(v1, v2)
+
+    # Normalize the normal vector
+    normal = normal / np.linalg.norm(normal)
+
+    return normal
+
+
+def cosin(n, l =[0,0,1]):
+    return n

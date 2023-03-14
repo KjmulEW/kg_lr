@@ -13,6 +13,7 @@ class image_obj:
     def __init__(self):
         self.verts = []
         self.poly = []
+        self.normals = []
         self.image_matrix_v = np.zeros((1000, 1000, 3), dtype=np.uint8)
         self.image_matrix_f = np.zeros((1000, 1000, 3), dtype=np.uint8)
         self.image_matrix_t = np.zeros((1000, 1000, 3), dtype=np.uint8)
@@ -46,6 +47,7 @@ class image_obj:
                 if xsplit[0] == "f":
                     self.poly.append(
                         list(map(int, [xsplit[1].split('/')[0], xsplit[2].split('/')[0], xsplit[3].split('/')[0]])))
+                    self.normals.append(kg_algs.triangle_normal(self.verts[self.poly[-1][0]-1],self.verts[self.poly[-1][1]-1], self.verts[self.poly[-1][2]-1] ))
                     flag = True
                 else:
                     if flag:
@@ -53,6 +55,17 @@ class image_obj:
         return self
 
     def draw_poly(self, filename, k):
+        for item in self.poly:
+            for i in range(3):
+                kg_algs.br_alg(-(self.verts[item[i] - 1][1] * k + CENTER_X),
+                               -(self.verts[item[i] - 1][0] * k + CENTER_Y),
+                               -(self.verts[item[(i + 1) % 3] - 1][1] * k + CENTER_X),
+                               -(self.verts[item[(i + 1) % 3] - 1][0] * k + CENTER_Y),
+                               self.image_matrix_f)
+        image = Image.fromarray(self.image_matrix_f, mode='RGB')
+        image.save(filename)
+
+    def draw_poly_new_cos(self, filename, k):
         for item in self.poly:
             for i in range(3):
                 kg_algs.br_alg(-(self.verts[item[i] - 1][1] * k + CENTER_X),
@@ -95,23 +108,15 @@ class image_obj:
         image = Image.fromarray(self.image_matrix_t, mode="RGB")
         image.save(filename)
 
-
 model1 = image_obj()
 model2 = image_obj()
 
 model1.read_vert(open("model_1.obj", "r"))
 model2.read_vert(open("model_2.obj", "r"))
-model1.draw_vert('vert1.png', 5000)
-model2.draw_vert('vert2.png', 1 / 3)
 
 model1.read_poly(open("model_1.obj", "r"))
 model2.read_poly(open("model_2.obj", "r"))
-model1.draw_poly('poly1.png', 5000)
-model2.draw_poly('poly2.png', 1 / 3)
 
-model3 = image_obj()
-model3.draw_triangle(*(np.random.randint(1000, size=6)-500), 1)
-model3.save_triangle("test_triangle.png")
 
-model1.draw_triangles("triangle1.png", 5000)
-model2.draw_triangles("triangle2.png", 1 / 3)
+
+
