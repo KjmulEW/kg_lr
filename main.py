@@ -91,16 +91,18 @@ class image_obj:
         ymin = int(min(y0, y1, y2))
         xmax = int(max(x0, x1, x2))
         ymax = int(max(y0, y1, y2))
+        tcos = kg_algs.triangle_cos(kg_algs.triangle_normal([x0,y0,0],[x1, y1,0], [x2, y2, 0] ))
+        print(kg_algs.triangle_normal([x0,y0,0],[x1, y1,0], [x2, y2, 0] ))
         if (xmin < 0): xmin = 0
         if (ymin < 0): ymin = 0
         if (xmax < 0): xmax = 1000
         if (ymax < 0): xmin = 1000
-        rand_color = np.random.randint(256, size=3)
+        shade_color = [255 * tcos, 0,0]
         for x in range(xmin, xmax + 1):
             for y in range(ymin, ymax + 1):
                 bar_cord = kg_algs.bar_cord(x, y, x0, y0, x1, y1, x2, y2)
                 if bar_cord[0] > 0 and bar_cord[1] > 0 and bar_cord[2] > 0:
-                    self.image_matrix_t[x, y] = rand_color
+                    self.image_matrix_t[x, y] = shade_color
 
     def draw_triangles(self, filename, k):
         for item in self.poly:
@@ -121,7 +123,7 @@ model2.read_vert(open("model_2.obj", "r"))
 model1.read_poly(open("model_1.obj", "r"))
 model2.read_poly(open("model_2.obj", "r"))
 
-model1.draw_poly_new_cos('poly1_12.png', 5000)
-model2.draw_poly_new_cos('poly2_12.png', 1 / 3)
+
+model2.draw_triangles("triangle2_13.png", 1 / 3)
 
 
