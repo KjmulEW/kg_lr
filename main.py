@@ -17,6 +17,7 @@ class image_obj:
         self.image_matrix_v = np.zeros((1000, 1000, 3), dtype=np.uint8)
         self.image_matrix_f = np.zeros((1000, 1000, 3), dtype=np.uint8)
         self.image_matrix_t = np.zeros((1000, 1000, 3), dtype=np.uint8)
+        self.z_buff = np.random.randint(0,100, (1000,1000))
 
     def read_vert(self, file):
         for x in file:
@@ -80,7 +81,7 @@ class image_obj:
         image = Image.fromarray(self.image_matrix_f, mode='RGB')
         image.save(filename)
 
-    def draw_triangle(self, x0, y0, x1, y1, x2, y2, k, tcos):
+    def draw_triangle(self, x0, y0, z0, x1, y1, z1, x2, y2, z2, k, tcos,):
         x0 = x0 * k + CENTER_X
         y0 = y0 * k + CENTER_Y
         x1 = x1 * k + CENTER_X
@@ -96,26 +97,32 @@ class image_obj:
         if (xmax < 0): xmax = 1000
         if (ymax < 0): xmin = 1000
 
-        shade_color = [255 * tcos, 255 * tcos,255 * tcos]
+        shade_color = [255 * tcos, 255 * tcos, 255 * tcos]
         for x in range(xmin, xmax + 1):
             for y in range(ymin, ymax + 1):
                 bar_cord = kg_algs.bar_cord(x, y, x0, y0, x1, y1, x2, y2)
                 if bar_cord[0] > 0 and bar_cord[1] > 0 and bar_cord[2] > 0:
-                    self.image_matrix_t[x, y] = shade_color
+                    z_poly = z0*bar_cord[0] + z1*bar_cord[1] + z2*bar_cord[2]
+                    if z_poly < self.z_buff[x,y]:
+                        self.image_matrix_t[x, y] = shade_color
+                        self.z_buff[x, y] = z_poly
 
     def draw_triangles(self, filename, k):
         j = 0
         for item in self.poly:
             x0 = -self.verts[item[0] - 1][1]
             y0 = -self.verts[item[0] - 1][0]
+            z0 = -self.verts[item[0] - 1][2]
             x1 = -self.verts[item[1] - 1][1]
             y1 = -self.verts[item[1] - 1][0]
+            z1 = -self.verts[item[1] - 1][2]
             x2 = -self.verts[item[2] - 1][1]
             y2 = -self.verts[item[2] - 1][0]
+            z2 = -self.verts[item[2] - 1][2]
             tcos = kg_algs.triangle_cos(self.normals[j])
             j+=1
             if tcos>0:
-                self.draw_triangle(x0, y0, x1, y1, x2, y2, k, tcos)
+                self.draw_triangle(x0, y0, z0, x1, y1, z1, x2, y2, z2, k, tcos)
                 self.save_triangle(filename)
 
     def save_triangle(self, filename):
@@ -132,6 +139,6 @@ model1.read_poly(open("model_1.obj", "r"))
 model2.read_poly(open("model_2.obj", "r"))
 
 
-model2.draw_triangles("triangle2_13.png", 1 / 3)
+model2.draw_triangles("triangle2_14.png", 1 / 3)
 
 
