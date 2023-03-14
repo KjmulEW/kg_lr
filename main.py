@@ -121,6 +121,7 @@ model2.read_vert(open("model_2.obj", "r"))
 model1.read_poly(open("model_1.obj", "r"))
 model2.read_poly(open("model_2.obj", "r"))
 
-
+model1.draw_poly_new_cos('poly1_12.png', 5000)
+model2.draw_poly_new_cos('poly2_12.png', 1 / 3)
 
 
