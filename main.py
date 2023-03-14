@@ -95,6 +95,7 @@ class image_obj:
         if (ymin < 0): ymin = 0
         if (xmax < 0): xmax = 1000
         if (ymax < 0): xmin = 1000
+
         shade_color = [255 * tcos, 255 * tcos,255 * tcos]
         for x in range(xmin, xmax + 1):
             for y in range(ymin, ymax + 1):
