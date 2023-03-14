@@ -80,7 +80,7 @@ class image_obj:
         image = Image.fromarray(self.image_matrix_f, mode='RGB')
         image.save(filename)
 
-    def draw_triangle(self, x0, y0, x1, y1, x2, y2, k):
+    def draw_triangle(self, x0, y0, x1, y1, x2, y2, k, tcos):
         x0 = x0 * k + CENTER_X
         y0 = y0 * k + CENTER_Y
         x1 = x1 * k + CENTER_X
@@ -91,13 +91,11 @@ class image_obj:
         ymin = int(min(y0, y1, y2))
         xmax = int(max(x0, x1, x2))
         ymax = int(max(y0, y1, y2))
-        tcos = kg_algs.triangle_cos(kg_algs.triangle_normal([x0,y0,0],[x1, y1,0], [x2, y2, 0] ))
-        print(kg_algs.triangle_normal([x0,y0,0],[x1, y1,0], [x2, y2, 0] ))
         if (xmin < 0): xmin = 0
         if (ymin < 0): ymin = 0
         if (xmax < 0): xmax = 1000
         if (ymax < 0): xmin = 1000
-        shade_color = [255 * tcos, 0,0]
+        shade_color = [255 * tcos, 255 * tcos,255 * tcos]
         for x in range(xmin, xmax + 1):
             for y in range(ymin, ymax + 1):
                 bar_cord = kg_algs.bar_cord(x, y, x0, y0, x1, y1, x2, y2)
@@ -105,10 +103,19 @@ class image_obj:
                     self.image_matrix_t[x, y] = shade_color
 
     def draw_triangles(self, filename, k):
+        j = 0
         for item in self.poly:
-            self.draw_triangle(-self.verts[item[0] - 1][1], -self.verts[item[0] - 1][0], -self.verts[item[1] - 1][1],
-                               -self.verts[item[1] - 1][0], -self.verts[item[2] - 1][1], -self.verts[item[2] - 1][0], k)
-            self.save_triangle(filename)
+            x0 = -self.verts[item[0] - 1][1]
+            y0 = -self.verts[item[0] - 1][0]
+            x1 = -self.verts[item[1] - 1][1]
+            y1 = -self.verts[item[1] - 1][0]
+            x2 = -self.verts[item[2] - 1][1]
+            y2 = -self.verts[item[2] - 1][0]
+            tcos = kg_algs.triangle_cos(self.normals[j])
+            j+=1
+            if tcos>0:
+                self.draw_triangle(x0, y0, x1, y1, x2, y2, k, tcos)
+                self.save_triangle(filename)
 
     def save_triangle(self, filename):
         image = Image.fromarray(self.image_matrix_t, mode="RGB")

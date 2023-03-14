@@ -48,7 +48,7 @@ def triangle_normal(vert0, vert1, vert2):
     """
     # Calculate two vectors within the triangle
     v1 = np.array([vert1[0] - vert0[0], vert1[1] - vert0[1], vert1[2] - vert0[2]])
-    v2 = np.array([vert1[0] - vert2[0], vert1[1] - vert2[1], vert1[2] - vert2[2]])
+    v2 = np.array([vert2[0] - vert0[0], vert2[1] - vert0[1], vert2[2] - vert0[2]])
 
     # Calculate the cross product of the two vectors to get the normal vector
     normal = np.cross(v1, v2)
@@ -60,5 +60,5 @@ def triangle_normal(vert0, vert1, vert2):
 
 
 def triangle_cos(n, l =[0,0,1]):
-    t_cos = np.dot(n,l) / (np.linalg.norm(n) * np.linalg.norm(l))
+    t_cos = np.dot(n,l) / (np.linalg.norm(n)* np.linalg.norm(n))
     return t_cos
