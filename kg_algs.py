@@ -59,5 +59,6 @@ def triangle_normal(vert0, vert1, vert2):
     return normal
 
 
-def cosin(n, l =[0,0,1]):
-    return n
+def triangle_cos(n, l =[0,0,1]):
+    t_cos = np.dot(n,l) / (np.linalg.norm(n) * np.linalg.norm(l))
+    return t_cos

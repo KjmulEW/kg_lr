@@ -66,13 +66,17 @@ class image_obj:
         image.save(filename)
 
     def draw_poly_new_cos(self, filename, k):
+        j = 0
         for item in self.poly:
-            for i in range(3):
-                kg_algs.br_alg(-(self.verts[item[i] - 1][1] * k + CENTER_X),
-                               -(self.verts[item[i] - 1][0] * k + CENTER_Y),
-                               -(self.verts[item[(i + 1) % 3] - 1][1] * k + CENTER_X),
-                               -(self.verts[item[(i + 1) % 3] - 1][0] * k + CENTER_Y),
-                               self.image_matrix_f)
+            tcos = kg_algs.triangle_cos(self.normals[j])
+            j+=1
+            if tcos < 0:
+                for i in range(3):
+                    kg_algs.br_alg(-(self.verts[item[i] - 1][1] * k + CENTER_X),
+                                   -(self.verts[item[i] - 1][0] * k + CENTER_Y),
+                                   -(self.verts[item[(i + 1) % 3] - 1][1] * k + CENTER_X),
+                                   -(self.verts[item[(i + 1) % 3] - 1][0] * k + CENTER_Y),
+                                   self.image_matrix_f)
         image = Image.fromarray(self.image_matrix_f, mode='RGB')
         image.save(filename)
 
