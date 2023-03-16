@@ -139,6 +139,5 @@ model1.read_poly(open("model_1.obj", "r"))
 model2.read_poly(open("model_2.obj", "r"))
 
 
-model2.draw_triangles("triangle2_14.png", 1 / 3)
-
-
+#model2.draw_triangles("triangle2_14.png", 1 / 3)
+model1.draw_triangles("triangle2_24.png", 5000)
