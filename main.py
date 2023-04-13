@@ -6,7 +6,7 @@ import kg_algs
 CENTER_X = 500
 CENTER_Y = 500
 CENTER_Z = 500
-Z_ADD = 100
+Z_ADD = 1
 
 
 class image_obj:
@@ -35,8 +35,8 @@ class image_obj:
     def draw_vert(self, filename, k):
         global CENTER_X, CENTER_Y
         for item in self.verts:
-            y = -int(item[0] * k / (item[2] + Z_ADD)) + CENTER_Y
-            x = -int(item[1] * k / (item[2] + Z_ADD)) + CENTER_X
+            y = -int(item[0] * k)  + CENTER_Y
+            x = -int(item[1] * k ) + CENTER_X
             self.image_matrix_v[x, y] = [255, 255, 255]
         image = Image.fromarray(self.image_matrix_v, mode='RGB')
         image.save(filename)
@@ -59,10 +59,10 @@ class image_obj:
     def draw_poly(self, filename, k):
         for item in self.poly:
             for i in range(3):
-                kg_algs.br_alg(-(self.verts[item[i] - 1][1] * k / (self.verts[item[i] - 1][2] + Z_ADD) + CENTER_X),
-                               -(self.verts[item[i] - 1][0] * k / (self.verts[item[i] - 1][2] + Z_ADD) + CENTER_Y),
-                               -(self.verts[item[(i + 1) % 3] - 1][1] * k / (self.verts[item[(i + 1) % 3] - 1][2] + Z_ADD) + CENTER_X),
-                               -(self.verts[item[(i + 1) % 3] - 1][0] * k / (self.verts[item[(i + 1) % 3] - 1][2] + Z_ADD) + CENTER_Y),
+                kg_algs.br_alg(-(self.verts[item[i] - 1][1] * k + CENTER_X),
+                               -(self.verts[item[i] - 1][0] * k  + CENTER_Y),
+                               -(self.verts[item[(i + 1) % 3] - 1][1] * k  + CENTER_X),
+                               -(self.verts[item[(i + 1) % 3] - 1][0] * k  + CENTER_Y),
                                self.image_matrix_f)
         image = Image.fromarray(self.image_matrix_f, mode='RGB')
         image.save(filename)
@@ -74,10 +74,10 @@ class image_obj:
             j+=1
             if tcos < 0:
                 for i in range(3):
-                    kg_algs.br_alg(-(self.verts[item[i] - 1][1] * k / (self.verts[item[i] - 1][2] + Z_ADD)+ CENTER_X),
-                                   -(self.verts[item[i] - 1][0] * k / (self.verts[item[i] - 1][2] + Z_ADD) + CENTER_Y),
-                                   -(self.verts[item[(i + 1) % 3] - 1][1] * k / (self.verts[item[(i + 1) % 3] - 1][2] + Z_ADD)+ CENTER_X),
-                                   -(self.verts[item[(i + 1) % 3] - 1][0] * k / (self.verts[item[(i + 1) % 3] - 1][2] + Z_ADD)+ CENTER_Y),
+                    kg_algs.br_alg(-(self.verts[item[i] - 1][1] * k + CENTER_X),
+                                   -(self.verts[item[i] - 1][0] * k + CENTER_Y),
+                                   -(self.verts[item[(i + 1) % 3] - 1][1] * k + CENTER_X),
+                                   -(self.verts[item[(i + 1) % 3] - 1][0] * k + CENTER_Y),
                                    self.image_matrix_f)
         image = Image.fromarray(self.image_matrix_f, mode='RGB')
         image.save(filename)
@@ -95,8 +95,8 @@ class image_obj:
         ymax = int(max(y0, y1, y2))
         if (xmin < 0): xmin = 0
         if (ymin < 0): ymin = 0
-        if (xmax < 0): xmax = 1000
-        if (ymax < 0): xmin = 1000
+        if (xmax >1000): xmax = 999
+        if (ymax > 1000): ymax = 999
 
         shade_color = [255 * tcos, 255 * tcos, 255 * tcos]
         for x in range(xmin, xmax + 1):
@@ -141,4 +141,4 @@ model2.read_poly(open("model_2.obj", "r"))
 
 
 model2.draw_triangles("triangle2_15_1.png", 1 / 3)
-model1.draw_triangles("triangle2_15_2.png", 5000)
+#model1.draw_triangles("triangle2_15_2.png", 5000)
