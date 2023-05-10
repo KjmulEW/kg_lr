@@ -3,7 +3,7 @@ import numpy as np
 import math
 import kg_algs
 
-CENTER_X = 500
+CENTER_X = 700
 CENTER_Y = 500
 CENTER_Z = 500
 d = 1000
@@ -32,7 +32,17 @@ class image_obj:
                         break
         return self
 
-    def projective_transform(x, y, z, d):
+    def read_normals(self, file):
+        for x in file:
+            if x.split():
+                flag = False
+                if x.split()[0] == "vn":
+                    self.normals.append(list(map(float, x.split()[1:])))
+                    flag = True
+                else:
+                    if flag:
+                        break
+    def projective_transform(self, x, y, z, d):
         xp = d * x / (z + d)
         yp = d * y / (z + d)
         return [xp, yp]
@@ -54,6 +64,9 @@ class image_obj:
                 if xsplit[0] == "f":
                     self.poly.append(
                         list(map(int, [xsplit[1].split('/')[0], xsplit[2].split('/')[0], xsplit[3].split('/')[0]])))
+                    self.normals.append(
+                        kg_algs.triangle_normal(self.verts[self.poly[-1][0] - 1], self.verts[self.poly[-1][1] - 1],
+                                                self.verts[self.poly[-1][2] - 1]))
                     flag = True
                 else:
                     if flag:
@@ -118,6 +131,9 @@ class image_obj:
                         self.image_matrix_t[x,y] = shade_color
                         self.z_buff[x,y] = z_poly
 
+    def save_triangle(self, filename):
+        image = Image.fromarray(self.image_matrix_t, mode="RGB")
+        image.save(filename)
     def draw_triangles(self,filename,k):
         j=0
         for item in self.poly:
@@ -136,22 +152,27 @@ class image_obj:
                 self.draw_triangle(x0, y0, z0, x1, y1, z1, x2, y2, z2, k, tcos)
                 self.save_triangle(filename)
 
-        def save_triangle(self, filename):
-            image = Image.fromarray(self.image_matrix_t, mode="RGB")
-            image.save(filename)
 
 
 
-        model1 = image_obj()
-        model2 = image_obj()
+model1 = image_obj()
+model2 = image_obj()
 
-        model1.read_vert(open("model_1.obj", "r"))
-        model2.read_vert(open("model_2.obj", "r"))
+model1.read_vert(open("model_1.obj", "r"))
+model2.read_vert(open("model_2.obj", "r"))
 
-        model1.read_poly(open("model_1.obj", "r"))
-        model2.read_poly(open("model_2.obj", "r"))
+model1.read_poly(open("model_1.obj", "r"))
+model2.read_poly(open("model_2.obj", "r"))
 
-        d = 1000  # расстояние от точки до плоскости проекции
 
-        # model2.draw_triangles("triangle2_14.png", 1 / 3)
-        model1.draw_triangles("triangle2_24.png", 5000)
+z_offset = abs(min([vert[2] for vert in model1.verts])) + 1
+for vert in model1.verts:
+    vert[2] += z_offset
+
+z_offset = abs(min([vert[2] for vert in model2.verts])) + 1
+for vert in model2.verts:
+    vert[2] += z_offset
+
+
+model2.draw_triangles("triangle2_44.png", 1 / 3)
+#model1.draw_triangles("triangle2_34.png", 5000)

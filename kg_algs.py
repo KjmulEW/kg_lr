@@ -37,9 +37,19 @@ def br_alg(x0, y0, x1, y1, image_matrix):
 
 
 def bar_cord(x, y, x0, y0, x1, y1, x2, y2):
-    lambda0 = ((x1 - x2) * (y - y2) - (y1 - y2) * (x - x2)) / ((x1 - x2) * (y0 - y2) - (y1 - y2) * (x0 - x2))
-    lambda1 = ((x2 - x0) * (y - y0) - (y2 - y0) * (x - x0)) / ((x2 - x0) * (y1 - y0) - (y2 - y0) * (x1 - x0))
-    lambda2 = ((x0 - x1) * (y - y1) - (y0 - y1) * (x - x1)) / ((x0 - x1) * (y2 - y1) - (y0 - y1) * (x2 - x1))
+
+    if ((x1 - x2) * (y0 - y2) - (y1 - y2) * (x0 - x2)):
+        lambda0 = ((x1 - x2) * (y - y2) - (y1 - y2) * (x - x2)) / ((x1 - x2) * (y0 - y2) - (y1 - y2) * (x0 - x2))
+    else:
+        lambda0 = 0.1
+    if (((x2 - x0) * (y1 - y0) - (y2 - y0) * (x1 - x0))):
+        lambda1 = ((x2 - x0) * (y - y0) - (y2 - y0) * (x - x0)) / ((x2 - x0) * (y1 - y0) - (y2 - y0) * (x1 - x0))
+    else:
+        lambda1 = 0.1
+    if (((x0 - x1) * (y2 - y1) - (y0 - y1) * (x2 - x1))):
+        lambda2 = ((x0 - x1) * (y - y1) - (y0 - y1) * (x - x1)) / ((x0 - x1) * (y2 - y1) - (y0 - y1) * (x2 - x1))
+    else:
+        lambda2 = 0.1
     return [lambda0, lambda1, lambda2]
 
 
