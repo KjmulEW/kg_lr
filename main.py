@@ -6,6 +6,7 @@ import kg_algs
 CENTER_X = 500
 CENTER_Y = 500
 CENTER_Z = 500
+Z_ADD = 1
 
 
 class image_obj:
@@ -34,8 +35,8 @@ class image_obj:
     def draw_vert(self, filename, k):
         global CENTER_X, CENTER_Y
         for item in self.verts:
-            y = -int(item[0] * k) + CENTER_Y
-            x = -int(item[1] * k) + CENTER_X
+            y = -int(item[0] * k)  + CENTER_Y
+            x = -int(item[1] * k ) + CENTER_X
             self.image_matrix_v[x, y] = [255, 255, 255]
         image = Image.fromarray(self.image_matrix_v, mode='RGB')
         image.save(filename)
@@ -59,9 +60,9 @@ class image_obj:
         for item in self.poly:
             for i in range(3):
                 kg_algs.br_alg(-(self.verts[item[i] - 1][1] * k + CENTER_X),
-                               -(self.verts[item[i] - 1][0] * k + CENTER_Y),
-                               -(self.verts[item[(i + 1) % 3] - 1][1] * k + CENTER_X),
-                               -(self.verts[item[(i + 1) % 3] - 1][0] * k + CENTER_Y),
+                               -(self.verts[item[i] - 1][0] * k  + CENTER_Y),
+                               -(self.verts[item[(i + 1) % 3] - 1][1] * k  + CENTER_X),
+                               -(self.verts[item[(i + 1) % 3] - 1][0] * k  + CENTER_Y),
                                self.image_matrix_f)
         image = Image.fromarray(self.image_matrix_f, mode='RGB')
         image.save(filename)
@@ -82,20 +83,20 @@ class image_obj:
         image.save(filename)
 
     def draw_triangle(self, x0, y0, z0, x1, y1, z1, x2, y2, z2, k, tcos,):
-        x0 = x0 * k + CENTER_X
-        y0 = y0 * k + CENTER_Y
-        x1 = x1 * k + CENTER_X
-        y1 = y1 * k + CENTER_Y
-        x2 = x2 * k + CENTER_X
-        y2 = y2 * k + CENTER_Y
+        x0 = x0 * k / (z0 + Z_ADD) + CENTER_X
+        y0 = y0 * k / (z0 + Z_ADD) + CENTER_Y
+        x1 = x1 * k / (z1 + Z_ADD)+ CENTER_X
+        y1 = y1 * k / (z1 + Z_ADD)+ CENTER_Y
+        x2 = x2 * k / (z2 + Z_ADD)+ CENTER_X
+        y2 = y2 * k / (z2 + Z_ADD)+ CENTER_Y
         xmin = int(min(x0, x1, x2))
         ymin = int(min(y0, y1, y2))
         xmax = int(max(x0, x1, x2))
         ymax = int(max(y0, y1, y2))
         if (xmin < 0): xmin = 0
         if (ymin < 0): ymin = 0
-        if (xmax < 0): xmax = 1000
-        if (ymax < 0): xmin = 1000
+        if (xmax >1000): xmax = 999
+        if (ymax > 1000): ymax = 999
 
         shade_color = [255 * tcos, 255 * tcos, 255 * tcos]
         for x in range(xmin, xmax + 1):
@@ -139,5 +140,5 @@ model1.read_poly(open("model_1.obj", "r"))
 model2.read_poly(open("model_2.obj", "r"))
 
 
-#model2.draw_triangles("triangle2_14.png", 1 / 3)
-model1.draw_triangles("triangle2_24.png", 5000)
+model2.draw_triangles("triangle2_15_1.png", 1 / 3)
+#model1.draw_triangles("triangle2_15_2.png", 5000)
