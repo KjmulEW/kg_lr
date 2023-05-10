@@ -32,6 +32,29 @@ class image_obj:
                         break
         return self
 
+    def rotate_x(self, angle):
+        angle = math.radians(angle)
+        for i in range(len(self.verts)):
+            y = self.verts[i][1]
+            z = self.verts[i][2]
+            self.verts[i][1] = y * math.cos(angle) - z * math.sin(angle)
+            self.verts[i][2] = z * math.cos(angle) + y * math.sin(angle)
+
+    def rotate_z(self, angle):
+        angle = math.radians(angle)
+        for i in range(len(self.verts)):
+            x = self.verts[i][0]
+            y = self.verts[i][1]
+            self.verts[i][0] = x * math.cos(angle) - y * math.sin(angle)
+            self.verts[i][1] = y * math.cos(angle) + x * math.sin(angle)
+    def rotate_y(self, angle):
+        angle = math.radians(angle)
+        for i in range(len(self.verts)):
+            x = self.verts[i][0]
+            z = self.verts[i][2]
+            self.verts[i][0] = x * math.cos(angle) - z * math.sin(angle)
+            self.verts[i][2] = z * math.cos(angle) + x * math.sin(angle)
+
     def read_normals(self, file):
         for x in file:
             if x.split():
@@ -161,10 +184,12 @@ model2 = image_obj()
 model1.read_vert(open("model_1.obj", "r"))
 model2.read_vert(open("model_2.obj", "r"))
 
+model2.rotate_z(30)  #16 задание. Добавлены 3 метода, можно вращать модели по координатам.
+
 model1.read_poly(open("model_1.obj", "r"))
 model2.read_poly(open("model_2.obj", "r"))
 
-
+#15 задание. Меняем координаты z у всех моделей. Так же добавлена ф-ция projective_transform
 z_offset = abs(min([vert[2] for vert in model1.verts])) + 1
 for vert in model1.verts:
     vert[2] += z_offset
