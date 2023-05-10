@@ -2,6 +2,7 @@ import numpy as np
 from PIL import Image
 import numpy as np
 import math
+#la
 
 
 def br_alg(x0, y0, x1, y1, image_matrix):
