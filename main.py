@@ -174,6 +174,17 @@ class image_obj:
             if tcos > 0:
                 self.draw_triangle(x0, y0, z0, x1, y1, z1, x2, y2, z2, k, tcos)
                 self.save_triangle(filename)
+    def gouraud_shading(self, light):
+        vertex_colors = []
+        for normal in self.normals:
+            l0 = np.dot(normal[0],light) / np.linalg.norm(normal[0]) / np.linalg.norm(light)
+            l1 = np.dot(normal[1], light) / np.linalg.norm(normal[1]) / np.linalg.norm(light)
+            l2 = np.dot(normal[2], light) / np.linalg.norm(normal[2]) / np.linalg.norm(light)
+
+            intensity = np.dot(normal, light)
+            color = [intensity * 255, intensity * 255, intensity * 255]
+            vertex_colors.append(color)
+        return vertex_colors
 
 
 
