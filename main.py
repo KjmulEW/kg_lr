@@ -15,6 +15,7 @@ class image_obj:
         self.verts = []
         self.poly = []
         self.normals = []
+        self.readed_normals = []
         self.image_matrix_v = np.zeros((1000, 1000, 3), dtype=np.uint8)
         self.image_matrix_f = np.zeros((1000, 1000, 3), dtype=np.uint8)
         self.image_matrix_t = np.zeros((1000, 1000, 3), dtype=np.uint8)
@@ -26,6 +27,18 @@ class image_obj:
                 flag = False
                 if x.split()[0] == "v":
                     self.verts.append(list(map(float, x.split()[1:])))
+                    flag = True
+                else:
+                    if flag:
+                        break
+        return self
+
+    def read_norms(self, file):
+        for x in file:
+            if x.split():
+                flag = False
+                if x.split()[0] == "vn":
+                    self.readed_normals.append(list(map(float, x.split()[1:])))
                     flag = True
                 else:
                     if flag:
@@ -55,16 +68,7 @@ class image_obj:
             self.verts[i][0] = x * math.cos(angle) - z * math.sin(angle)
             self.verts[i][2] = z * math.cos(angle) + x * math.sin(angle)
 
-    def read_normals(self, file):
-        for x in file:
-            if x.split():
-                flag = False
-                if x.split()[0] == "vn":
-                    self.normals.append(list(map(float, x.split()[1:])))
-                    flag = True
-                else:
-                    if flag:
-                        break
+
     def projective_transform(self, x, y, z, d):
         xp = d * x / (z + d)
         yp = d * y / (z + d)
@@ -125,7 +129,8 @@ class image_obj:
         image = Image.fromarray(self.image_matrix_f, mode='RGB')
         image.save(filename)
 
-    def draw_triangle(self, x0, y0, z0, x1, y1, z1, x2, y2, z2, k, tcos):
+    def draw_triangle(self, x0, y0, z0, x1, y1, z1, x2, y2, z2, k, tcos, n0, n1, n2):
+        light = [1,0,1]
         x0, y0 = self.projective_transform(x0, y0, z0, d)
         x1, y1 = self.projective_transform(x1, y1, z1, d)
         x2, y2 = self.projective_transform(x2, y2, z2, d)
@@ -144,14 +149,17 @@ class image_obj:
         if (xmax < 0): xmax = 1000
         if (ymax < 0): xmin = 1000
 
-        shade_color = [255 * tcos, 255 * tcos, 255 * tcos]
+        l0 = np.dot(n0, light) / np.linalg.norm(n0) / np.linalg.norm(light)
+        l1 = np.dot(n1, light) / np.linalg.norm(n1) / np.linalg.norm(light)
+        l2 = np.dot(n2, light) / np.linalg.norm(n2) / np.linalg.norm(light)
+
         for x in range(xmin, xmax + 1):
             for y in range(ymin, ymax + 1):
                 bar_cord = kg_algs.bar_cord(x - CENTER_X / k , y - CENTER_Y / k , x0 - CENTER_X / k , y0 - CENTER_Y / k , x1 - CENTER_X / k , y1 - CENTER_Y / k , x2 - CENTER_X / k , y2 - CENTER_Y / k )
                 if bar_cord[0] > 0 and bar_cord[1] > 0 and bar_cord[2] > 0:
                     z_poly = z0*bar_cord[0] + z1*bar_cord[1] + z2*bar_cord[2]
                     if z_poly < self.z_buff[x,y]:
-                        self.image_matrix_t[x,y] = shade_color
+                        self.image_matrix_t[x,y] = [255 * bar_cord[0] * l0, 255 * bar_cord[1] * l1, 255 * bar_cord[2] * l2]
                         self.z_buff[x,y] = z_poly
 
     def save_triangle(self, filename):
@@ -159,33 +167,27 @@ class image_obj:
         image.save(filename)
     def draw_triangles(self,filename,k):
         j=0
+        print(len(self.verts))
+        print(len(self.readed_normals))
         for item in self.poly:
-            x0=-self.verts[item[0]-1][1]
-            y0=-self.verts[item[0]-1][0]
-            z0=-self.verts[item[0]-1][2]
-            x1=-self.verts[item[1]-1][1]
-            y1 = -self.verts[item[1] - 1][0]
-            z1 = -self.verts[item[1] - 1][2]
-            x2 = -self.verts[item[2] - 1][1]
-            y2 = -self.verts[item[2] - 1][0]
-            z2 = -self.verts[item[2] - 1][2]
-            tcos = kg_algs.triangle_cos(self.normals[j])
-            j += 1
-            if tcos > 0:
-                self.draw_triangle(x0, y0, z0, x1, y1, z1, x2, y2, z2, k, tcos)
-                self.save_triangle(filename)
-    def gouraud_shading(self, light):
-        vertex_colors = []
-        for normal in self.normals:
-            l0 = np.dot(normal[0],light) / np.linalg.norm(normal[0]) / np.linalg.norm(light)
-            l1 = np.dot(normal[1], light) / np.linalg.norm(normal[1]) / np.linalg.norm(light)
-            l2 = np.dot(normal[2], light) / np.linalg.norm(normal[2]) / np.linalg.norm(light)
-
-            intensity = np.dot(normal, light)
-            color = [intensity * 255, intensity * 255, intensity * 255]
-            vertex_colors.append(color)
-        return vertex_colors
-
+            if not(item[0]-1 >= len(self.readed_normals) or  item[1]-1 >= len(self.readed_normals) or item[2]-1 >= len(self.readed_normals)):
+                x0=-self.verts[item[0]-1][1]
+                y0=-self.verts[item[0]-1][0]
+                z0=-self.verts[item[0]-1][2]
+                n0 = self.readed_normals[item[0]-1]
+                x1=-self.verts[item[1]-1][1]
+                y1 = -self.verts[item[1] - 1][0]
+                z1 = -self.verts[item[1] - 1][2]
+                n1 = self.readed_normals[item[1] - 1]
+                x2 = -self.verts[item[2] - 1][1]
+                y2 = -self.verts[item[2] - 1][0]
+                z2 = -self.verts[item[2] - 1][2]
+                n2 = self.readed_normals[item[2] - 1]
+                tcos = kg_algs.triangle_cos(self.normals[j])
+                j += 1
+                if tcos > 0:
+                    self.draw_triangle(x0, y0, z0, x1, y1, z1, x2, y2, z2, k, tcos, n0, n1, n2)
+                    self.save_triangle(filename)
 
 
 
@@ -195,20 +197,11 @@ model2 = image_obj()
 model1.read_vert(open("model_1.obj", "r"))
 model2.read_vert(open("model_2.obj", "r"))
 
-model2.rotate_z(30)  #16 задание. Добавлены 3 метода, можно вращать модели по координатам.
+model1.read_norms(open("model_1.obj", "r"))
+model2.read_norms(open("model_2.obj", "r"))
 
 model1.read_poly(open("model_1.obj", "r"))
 model2.read_poly(open("model_2.obj", "r"))
 
-#15 задание. Меняем координаты z у всех моделей. Так же добавлена ф-ция projective_transform
-z_offset = abs(min([vert[2] for vert in model1.verts])) + 1
-for vert in model1.verts:
-    vert[2] += z_offset
-
-z_offset = abs(min([vert[2] for vert in model2.verts])) + 1
-for vert in model2.verts:
-    vert[2] += z_offset
-
-
-model2.draw_triangles("triangle2_44.png", 1 / 3)
-#model1.draw_triangles("triangle2_34.png", 5000)
+#model2.draw_triangles("triangleGURU2.png", 1 / 3)
+model1.draw_triangles("triangle2GURU2.png", 5000)
