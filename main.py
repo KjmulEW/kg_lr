@@ -181,7 +181,6 @@ class image_obj:
             l1 = np.dot(normal[1], light) / np.linalg.norm(normal[1]) / np.linalg.norm(light)
             l2 = np.dot(normal[2], light) / np.linalg.norm(normal[2]) / np.linalg.norm(light)
 
-            intensity = np.dot(normal, light)
             color = [intensity * 255, intensity * 255, intensity * 255]
             vertex_colors.append(color)
         return vertex_colors
