@@ -159,10 +159,11 @@ class image_obj:
             for y in range(ymin, ymax + 1):
                 bar_cord = kg_algs.bar_cord(x - CENTER_X / k , y - CENTER_Y / k , x0 - CENTER_X / k , y0 - CENTER_Y / k , x1 - CENTER_X / k , y1 - CENTER_Y / k , x2 - CENTER_X / k , y2 - CENTER_Y / k )
                 if bar_cord[0] >= 0 and bar_cord[1] >= 0 and bar_cord[2] >= 0:
-                    z_poly = z0*bar_cord[0] + z1*bar_cord[1] + z2*bar_cord[2]
-                    if z_poly < self.z_buff[x,y]:
-                        self.image_matrix_t[x,y] = [0, 255 * (bar_cord[0] * l0 +  bar_cord[1] * l1 + bar_cord[2] * l2 ), 0]
-                        self.z_buff[x,y] = z_poly
+                    if (bar_cord[0] * l0 + bar_cord[1] * l1 + bar_cord[2] * l2) >= 0:
+                        z_poly = z0*bar_cord[0] + z1*bar_cord[1] + z2*bar_cord[2]
+                        if z_poly < self.z_buff[x,y]:
+                            self.image_matrix_t[x,y] = [0, 255 * (bar_cord[0] * l0 + bar_cord[1] * l1 + bar_cord[2] * l2), 0]
+                            self.z_buff[x,y] = z_poly
 
     def save_triangle(self, filename):
         image = Image.fromarray(self.image_matrix_t, mode="RGB")
@@ -204,4 +205,4 @@ model1.read_poly(open("model_1.obj", "r"))
 
 
 #model2.draw_triangles("triangleGURU2.png", 1 / 3)
-model1.draw_triangles("triangle2GURU7.png", 5000)
+model1.draw_triangles("triangle2GURU8.png", 5000)
