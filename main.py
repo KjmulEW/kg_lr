@@ -20,7 +20,7 @@ class image_obj:
         self.image_matrix_v = np.zeros((1000, 1000, 3), dtype=np.uint8)
         self.image_matrix_f = np.zeros((1000, 1000, 3), dtype=np.uint8)
         self.image_matrix_t = np.zeros((1000, 1000, 3), dtype=np.uint8)
-        self.z_buff = np.random.randint(0,100, (1000,1000))
+        self.z_buff = np.array([[np.inf]*1000]*1000)
 
     def read_vert(self, file):
         for x in file:
@@ -133,16 +133,15 @@ class image_obj:
         image.save(filename)
 
     def draw_triangle(self, x0, y0, z0, x1, y1, z1, x2, y2, z2, k, tcos, n0, n1, n2):
-        light = [1,0,1]
-        x0, y0 = self.projective_transform(x0, y0, z0, d)
-        x1, y1 = self.projective_transform(x1, y1, z1, d)
-        x2, y2 = self.projective_transform(x2, y2, z2, d)
+        light = [0,0,1]
+
         x0 = int(x0 * k) + CENTER_X
         y0 = int(y0 * k) + CENTER_Y
         x1 = int(x1 * k) + CENTER_X
         y1 = int(y1 * k) + CENTER_Y
         x2 = int(x2 * k) + CENTER_X
         y2 = int(y2 * k) + CENTER_Y
+
         xmin = int(min(x0, x1, x2))
         ymin = int(min(y0, y1, y2))
         xmax = int(max(x0, x1, x2))
@@ -162,7 +161,7 @@ class image_obj:
                 if bar_cord[0] >= 0 and bar_cord[1] >= 0 and bar_cord[2] >= 0:
                     z_poly = z0*bar_cord[0] + z1*bar_cord[1] + z2*bar_cord[2]
                     if z_poly < self.z_buff[x,y]:
-                        self.image_matrix_t[x,y] = [255 * (bar_cord[0] * l0 +  bar_cord[1] * l1 + bar_cord[2] * l2 ), 0, 0]
+                        self.image_matrix_t[x,y] = [0, 255 * (bar_cord[0] * l0 +  bar_cord[1] * l1 + bar_cord[2] * l2 ), 0]
                         self.z_buff[x,y] = z_poly
 
     def save_triangle(self, filename):
@@ -170,27 +169,25 @@ class image_obj:
         image.save(filename)
     def draw_triangles(self,filename,k):
         j=0
-        print(len(self.verts))
-        print(len(self.readed_normals))
         for item in self.poly:
-            if not(item[0]-1 >= len(self.readed_normals) or  item[1]-1 >= len(self.readed_normals) or item[2]-1 >= len(self.readed_normals)):
-                x0=-self.verts[item[0]-1][1]
-                y0=-self.verts[item[0]-1][0]
-                z0=-self.verts[item[0]-1][2]
-                n0 = self.readed_normals[self.num_normals[j][0]-1]
-                x1=-self.verts[item[1]-1][1]
-                y1 = -self.verts[item[1] - 1][0]
-                z1 = -self.verts[item[1] - 1][2]
-                n1 = self.readed_normals[self.num_normals[j][1]-1]
-                x2 = -self.verts[item[2] - 1][1]
-                y2 = -self.verts[item[2] - 1][0]
-                z2 = -self.verts[item[2] - 1][2]
-                n2 = self.readed_normals[self.num_normals[j][2]-1]
-                tcos = kg_algs.triangle_cos(self.normals[j])
-                j += 1
-                if tcos > 0:
-                    self.draw_triangle(x0, y0, z0, x1, y1, z1, x2, y2, z2, k, tcos, n0, n1, n2)
-                    self.save_triangle(filename)
+            # if not(item[0]-1 >= len(self.readed_normals) or  item[1]-1 >= len(self.readed_normals) or item[2]-1 >= len(self.readed_normals)):
+            x0=-self.verts[item[0]-1][1]
+            y0=-self.verts[item[0]-1][0]
+            z0=-self.verts[item[0]-1][2]
+            n0 = self.readed_normals[self.num_normals[j][0]-1]
+            x1=-self.verts[item[1]-1][1]
+            y1 = -self.verts[item[1] - 1][0]
+            z1 = -self.verts[item[1] - 1][2]
+            n1 = self.readed_normals[self.num_normals[j][1]-1]
+            x2 = -self.verts[item[2] - 1][1]
+            y2 = -self.verts[item[2] - 1][0]
+            z2 = -self.verts[item[2] - 1][2]
+            n2 = self.readed_normals[self.num_normals[j][2]-1]
+            tcos = kg_algs.triangle_cos(self.normals[j])
+            j += 1
+            if tcos > 0:
+                self.draw_triangle(x0, y0, z0, x1, y1, z1, x2, y2, z2, k, tcos, n0, n1, n2)
+                self.save_triangle(filename)
 
 
 
@@ -207,4 +204,4 @@ model1.read_poly(open("model_1.obj", "r"))
 
 
 #model2.draw_triangles("triangleGURU2.png", 1 / 3)
-model1.draw_triangles("triangle2GURU3.png", 5000)
+model1.draw_triangles("triangle2GURU7.png", 5000)

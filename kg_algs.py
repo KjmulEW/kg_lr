@@ -41,15 +41,15 @@ def bar_cord(x, y, x0, y0, x1, y1, x2, y2):
     if ((x1 - x2) * (y0 - y2) - (y1 - y2) * (x0 - x2)):
         lambda0 = ((x1 - x2) * (y - y2) - (y1 - y2) * (x - x2)) / ((x1 - x2) * (y0 - y2) - (y1 - y2) * (x0 - x2))
     else:
-        lambda0 = 0.1
+        lambda0 = 0
     if (((x2 - x0) * (y1 - y0) - (y2 - y0) * (x1 - x0))):
         lambda1 = ((x2 - x0) * (y - y0) - (y2 - y0) * (x - x0)) / ((x2 - x0) * (y1 - y0) - (y2 - y0) * (x1 - x0))
     else:
-        lambda1 = 0.1
+        lambda1 = 0
     if (((x0 - x1) * (y2 - y1) - (y0 - y1) * (x2 - x1))):
         lambda2 = ((x0 - x1) * (y - y1) - (y0 - y1) * (x - x1)) / ((x0 - x1) * (y2 - y1) - (y0 - y1) * (x2 - x1))
     else:
-        lambda2 = 0.1
+        lambda2 = 0
     return [lambda0, lambda1, lambda2]
 
 
@@ -67,7 +67,7 @@ def triangle_normal(vert0, vert1, vert2):
     # Normalize the normal vector
     normal = normal / np.linalg.norm(normal)
 
-    return -normal
+    return normal
 
 
 def triangle_cos(n, l =[0,0,1]):
