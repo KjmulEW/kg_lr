@@ -91,6 +91,8 @@ class image_obj:
                 if xsplit[0] == "f":
                     self.poly.append(
                         list(map(int, [xsplit[1].split('/')[0], xsplit[2].split('/')[0], xsplit[3].split('/')[0]])))
+                    self.readed_normals.append(
+                        list(map(int, [xsplit[1].split('/')[2], xsplit[2].split('/')[2], xsplit[3].split('/')[2]])))
                     self.normals.append(
                         kg_algs.triangle_normal(self.verts[self.poly[-1][0] - 1], self.verts[self.poly[-1][1] - 1],
                                                 self.verts[self.poly[-1][2] - 1]))
@@ -130,7 +132,7 @@ class image_obj:
         image.save(filename)
 
     def draw_triangle(self, x0, y0, z0, x1, y1, z1, x2, y2, z2, k, tcos, n0, n1, n2):
-        light = [1,0,1]
+        light = [0,1,1]
         x0, y0 = self.projective_transform(x0, y0, z0, d)
         x1, y1 = self.projective_transform(x1, y1, z1, d)
         x2, y2 = self.projective_transform(x2, y2, z2, d)
@@ -197,8 +199,6 @@ model2 = image_obj()
 model1.read_vert(open("model_1.obj", "r"))
 model2.read_vert(open("model_2.obj", "r"))
 
-model1.read_norms(open("model_1.obj", "r"))
-model2.read_norms(open("model_2.obj", "r"))
 
 model1.read_poly(open("model_1.obj", "r"))
 model2.read_poly(open("model_2.obj", "r"))
