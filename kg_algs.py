@@ -67,7 +67,7 @@ def triangle_normal(vert0, vert1, vert2):
     # Normalize the normal vector
     normal = normal / np.linalg.norm(normal)
 
-    return normal
+    return -normal
 
 
 def triangle_cos(n, l =[0,0,1]):

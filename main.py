@@ -133,7 +133,7 @@ class image_obj:
         image.save(filename)
 
     def draw_triangle(self, x0, y0, z0, x1, y1, z1, x2, y2, z2, k, tcos, n0, n1, n2):
-        light = [0,1,1]
+        light = [1,0,1]
         x0, y0 = self.projective_transform(x0, y0, z0, d)
         x1, y1 = self.projective_transform(x1, y1, z1, d)
         x2, y2 = self.projective_transform(x2, y2, z2, d)
@@ -159,7 +159,7 @@ class image_obj:
         for x in range(xmin, xmax + 1):
             for y in range(ymin, ymax + 1):
                 bar_cord = kg_algs.bar_cord(x - CENTER_X / k , y - CENTER_Y / k , x0 - CENTER_X / k , y0 - CENTER_Y / k , x1 - CENTER_X / k , y1 - CENTER_Y / k , x2 - CENTER_X / k , y2 - CENTER_Y / k )
-                if bar_cord[0] > 0 and bar_cord[1] > 0 and bar_cord[2] > 0:
+                if bar_cord[0] >= 0 and bar_cord[1] >= 0 and bar_cord[2] >= 0:
                     z_poly = z0*bar_cord[0] + z1*bar_cord[1] + z2*bar_cord[2]
                     if z_poly < self.z_buff[x,y]:
                         self.image_matrix_t[x,y] = [255 * (bar_cord[0] * l0 +  bar_cord[1] * l1 + bar_cord[2] * l2 ), 0, 0]
