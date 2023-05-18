@@ -15,6 +15,7 @@ class image_obj:
         self.verts = []
         self.poly = []
         self.normals = []
+        self.num_normals = []
         self.readed_normals = []
         self.image_matrix_v = np.zeros((1000, 1000, 3), dtype=np.uint8)
         self.image_matrix_f = np.zeros((1000, 1000, 3), dtype=np.uint8)
@@ -91,8 +92,8 @@ class image_obj:
                 if xsplit[0] == "f":
                     self.poly.append(
                         list(map(int, [xsplit[1].split('/')[0], xsplit[2].split('/')[0], xsplit[3].split('/')[0]])))
-                    self.readed_normals.append(
-                        list(map(int, [xsplit[1].split('/')[2], xsplit[2].split('/')[2], xsplit[3].split('/')[2]])))
+                    self.num_normals.append(
+                         list(map(int, [xsplit[1].split('/')[2], xsplit[2].split('/')[2], xsplit[3].split('/')[2]])))
                     self.normals.append(
                         kg_algs.triangle_normal(self.verts[self.poly[-1][0] - 1], self.verts[self.poly[-1][1] - 1],
                                                 self.verts[self.poly[-1][2] - 1]))
@@ -161,7 +162,7 @@ class image_obj:
                 if bar_cord[0] > 0 and bar_cord[1] > 0 and bar_cord[2] > 0:
                     z_poly = z0*bar_cord[0] + z1*bar_cord[1] + z2*bar_cord[2]
                     if z_poly < self.z_buff[x,y]:
-                        self.image_matrix_t[x,y] = [255 * bar_cord[0] * l0, 255 * bar_cord[1] * l1, 255 * bar_cord[2] * l2]
+                        self.image_matrix_t[x,y] = [255 * (bar_cord[0] * l0 +  bar_cord[1] * l1 + bar_cord[2] * l2 ), 0, 0]
                         self.z_buff[x,y] = z_poly
 
     def save_triangle(self, filename):
@@ -176,15 +177,15 @@ class image_obj:
                 x0=-self.verts[item[0]-1][1]
                 y0=-self.verts[item[0]-1][0]
                 z0=-self.verts[item[0]-1][2]
-                n0 = self.readed_normals[item[0]-1]
+                n0 = self.readed_normals[self.num_normals[j][0]-1]
                 x1=-self.verts[item[1]-1][1]
                 y1 = -self.verts[item[1] - 1][0]
                 z1 = -self.verts[item[1] - 1][2]
-                n1 = self.readed_normals[item[1] - 1]
+                n1 = self.readed_normals[self.num_normals[j][1]-1]
                 x2 = -self.verts[item[2] - 1][1]
                 y2 = -self.verts[item[2] - 1][0]
                 z2 = -self.verts[item[2] - 1][2]
-                n2 = self.readed_normals[item[2] - 1]
+                n2 = self.readed_normals[self.num_normals[j][2]-1]
                 tcos = kg_algs.triangle_cos(self.normals[j])
                 j += 1
                 if tcos > 0:
@@ -197,11 +198,13 @@ model1 = image_obj()
 model2 = image_obj()
 
 model1.read_vert(open("model_1.obj", "r"))
-model2.read_vert(open("model_2.obj", "r"))
+# model2.read_vert(open("model_2.obj", "r"))
 
+model1.read_norms(open("model_1.obj", "r"))
 
 model1.read_poly(open("model_1.obj", "r"))
-model2.read_poly(open("model_2.obj", "r"))
+# model2.read_poly(open("model_2.obj", "r"))
+
 
 #model2.draw_triangles("triangleGURU2.png", 1 / 3)
-model1.draw_triangles("triangle2GURU2.png", 5000)
+model1.draw_triangles("triangle2GURU3.png", 5000)
