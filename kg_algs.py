@@ -73,3 +73,25 @@ def triangle_normal(vert0, vert1, vert2):
 def triangle_cos(n, l =[0,0,1]):
     t_cos = np.dot(n,l) / (np.linalg.norm(n)* np.linalg.norm(n))
     return t_cos
+
+
+def HSBtoRGB(hue, saturation, brightness):
+    c = brightness * saturation
+    x = c * (1 - abs((hue / 60) % 2 - 1))
+    m = brightness - c
+    if 0 <= hue < 60:
+        r, g, b = c, x, 0
+    elif 60 <= hue < 120:
+        r, g, b = x, c, 0
+    elif 120 <= hue < 180:
+        r, g, b = 0, c, x
+    elif 180 <= hue < 240:
+        r, g, b = 0, x, c
+    elif 240 <= hue < 300:
+        r, g, b = x, 0, c
+    else:
+        r, g, b = c, 0, x
+    r = int((r + m) * 255)
+    g = int((g + m) * 255)
+    b = int((b + m) * 255)
+    return [r,g,b]
