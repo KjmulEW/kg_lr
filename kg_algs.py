@@ -94,4 +94,4 @@ def HSBtoRGB(hue, saturation, brightness):
     r = int((r + m) * 255)
     g = int((g + m) * 255)
     b = int((b + m) * 255)
-    return [r,g,b]
+    return r,g,b
